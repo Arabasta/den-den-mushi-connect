@@ -3,6 +3,7 @@ const {createServer} = require('http');
 const {WebSocketServer} = require('ws');
 const pty = require('node-pty');
 const os = require("node:os");
+const {join} = require("node:path");
 
 const app = express();
 const server = createServer(app);
@@ -12,10 +13,24 @@ app.use(express.static('public'));
 
 const shellType = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
-wss.on('connection', (ws) => {
-        console.log('New terminal connection');
+function getCertFromVault() {
+    return join(__dirname, 'your.pem');
+}
 
-        const shell = pty.spawn(shellType, [],
+wss.on('connection', (ws) => {
+    console.log('New terminal connection');
+
+    const privateKeyPath = getCertFromVault();
+    const targetHost = "yourhost";
+    const targetUser = "ec2-user";
+    const targetPort = "22";
+
+    const shell = pty.spawn('ssh',
+        [
+            '-i', privateKeyPath,
+            '-p', targetPort,
+            `${targetUser}@${targetHost}`,
+            ],
             {
                 name: 'xterm-color',
                 cols: 80,
@@ -24,7 +39,6 @@ wss.on('connection', (ws) => {
                 env: {
                     ...process.env,
                     TERM: 'xterm-256color',
-                    //PROMPT_COMMAND: 'stty -echo >/dev/null 2>&1', // disable echoing input
                 },
             }
         );
