@@ -1,4 +1,4 @@
-# Den Den Mushi SSH
+# Den Den Mushi Connect
 Browser-based Terminal emulator for easy low latency shell access to cloud compute instances.
 
 ![example.gif](assets/example.gif)
@@ -22,7 +22,7 @@ sudo yum install gcc-c++ make -y
 
 1. Clone the repository
 ```bash
-git clone https://github.com/Arabasta/den-den-mushi.git
+git clone https://github.com/Arabasta/den-den-mushi-connect.git
 ```
 
 2. Install dependencies
@@ -33,4 +33,8 @@ npm install
 3. Start the server
 ```bash
 npm start
+```
+
+```bash
+pm2 start kagebunshin.js --name "den-den-mushi-connect" --watch
 ```

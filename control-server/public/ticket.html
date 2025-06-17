@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter CR Number</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h2>Enter CR Number</h2>
+<form id="ticketForm">
+    <input type="hidden" id="username" name="username">
+    <label for="ticket">CR Number:</label>
+    <input type="text" id="ticket" required>
+
+    <button type="submit">Submit</button>
+<br>
+
+</form>
+
+<div id="result"></div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get('user');
+    document.getElementById('username').value = username;
+
+    document.getElementById('ticketForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const ticket = document.getElementById('ticket').value;
+
+        const res = await fetch('/api/validate-ticket', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, ticketId: ticket })
+        });
+
+        const result = await res.json();
+        const resultDiv = document.getElementById('result');
+
+        if (res.ok) {
+            window.location.href = `/hosts?user=${encodeURIComponent(username)}&ticket=${encodeURIComponent(ticket)}`;
+        } else {
+            resultDiv.innerHTML = `<p style="color: red;">Error: ${result.error}</p>`;
+        }
+    });
+</script>
+</body>
+</html>

@@ -7,10 +7,11 @@ const socketManager = {
     socket: null,
     reconnectAttempts: 0,
 
-    connect() {
+    connect(sessionId, token) {
         if (this.socket?.readyState === WebSocket.OPEN) return;
 
-        this.socket = new WebSocket(`ws://${window.location.hostname}:${config.port}`);
+        const url = `ws://localhost:45005/?sessionId=${encodeURIComponent(sessionId)}&token=${encodeURIComponent(token)}`;
+        this.socket = new WebSocket(url);
 
         this.socket.onmessage = (event) => {
             console.log('Received from server:', event.data);
@@ -24,18 +25,18 @@ const socketManager = {
         };
 
         this.socket.onclose = ({code, reason}) => {
-            if (code === 1003) { // Unsupported platform
-                term.write(`\r\x1b[31m${reason}\x1b[0m\r\n`);
-                return;
-            }
+            // if (code === 1003) { // Unsupported platform
+            //     term.write(`\r\x1b[31m${reason}\x1b[0m\r\n`);
+            //     return;
+            // }
 
-            if (this.reconnectAttempts < config.maxReconnectAttempts) {
-                this.reconnectAttempts++;
-                term.write(`\r\x1b[33mReconnecting (${this.reconnectAttempts}/${config.maxReconnectAttempts})...\x1b[0m\r\n`);
-                setTimeout(() => this.connect(), config.reconnectDelay);
-            } else {
-                term.write('\r\n\x1b[31mMax reconnection attempts reached\x1b[0m\r\n');
-            }
+            // if (this.reconnectAttempts < config.maxReconnectAttempts) {
+            //     this.reconnectAttempts++;
+            //     term.write(`\r\x1b[33mReconnecting (${this.reconnectAttempts}/${config.maxReconnectAttempts})...\x1b[0m\r\n`);
+            //     setTimeout(() => this.connect(), config.reconnectDelay);
+            // } else {
+            //     term.write('\r\n\x1b[31mMax reconnection attempts reached\x1b[0m\r\n');
+            // }
         };
 
         this.socket.onerror = (error) => {

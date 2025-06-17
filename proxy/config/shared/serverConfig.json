@@ -1,0 +1,4 @@
+{
+  "port":45005,
+  "clusters": "max"
+}

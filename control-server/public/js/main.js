@@ -18,7 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     fitAddon.fit();
 
     showAsciiArt(term);
-    socketManager.connect();
+
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('sessionId');
+    const token = params.get('token');
+    if (!sessionId || !token) {
+        term.write('\r\n\x1b[31mMissing sessionId or token in URL\x1b[0m\r\n');
+    } else {
+        socketManager.connect(sessionId, token);
+    }
+
     registerHandlers();
 
     // handle window resize

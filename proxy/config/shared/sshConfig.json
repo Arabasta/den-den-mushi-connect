@@ -1,0 +1,7 @@
+{
+  "connectTimeout": 30,
+  "permitLocalCommand": "no",
+  "logLevel": "VERBOSE",
+  "strictHostKeyChecking": "no",
+  "userKnownHostsFile": "/dev/null"
+}
